@@ -6,7 +6,17 @@ gazelle(name = "gazelle")
 
 go_binary(
     name = "tcn_psi_test",
-    srcs = ["main.go"],
-    deps = ["//tcn_psi/go/client:client", "//tcn_psi/go/server:server"],
+    embed = [":go_default_library"],
     visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "github.com/openmined/tcn-psi",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//tcn_psi/go/client",
+        "//tcn_psi/go/server",
+    ],
 )
