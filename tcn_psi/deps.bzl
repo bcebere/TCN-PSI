@@ -19,15 +19,9 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
-load("@org_openmined_psi//private_set_intersection:preload.bzl", "psi_preload")
-load("@org_openmined_psi//private_set_intersection:deps.bzl", "psi_deps")
 
 
 def tcn_psi_deps():
-    # Protocol-specific dependencies.
-    psi_preload()
-    psi_deps()
-
     # Language-specific dependencies.
 
     # Protobuf.
