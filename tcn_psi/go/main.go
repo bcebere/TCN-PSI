@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/openmined/tcn-psi/client"
 	"github.com/openmined/tcn-psi/server"
 )
