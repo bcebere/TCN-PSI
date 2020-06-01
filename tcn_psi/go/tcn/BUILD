@@ -3,10 +3,11 @@ load("@io_bazel_rules_go//go:def.bzl", "go_test", "go_library")
 go_library(
     name = "tcn",
     srcs = [
-        "parse.go",
+        "serialize.go",
         "report.go",
         "signedreport.go",
-        "tcn.go",
+        "constants.go",
+        "keys.go",
     ],
     deps = [
         "@com_github_stretchr_testify//assert:go_default_library",

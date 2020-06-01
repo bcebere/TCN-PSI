@@ -17,7 +17,7 @@ type SignedReport struct {
 	// This is an ed25519 signature in byte array form
 	// The ed25519 package returns a byte array as the signature
 	// here: https://golang.org/pkg/crypto/ed25519/#PrivateKey.Sign
-	Sig []byte `db:"sig"`
+	Sig []byte
 }
 
 // Bytes converts sr to a concatenated byte array representation.
