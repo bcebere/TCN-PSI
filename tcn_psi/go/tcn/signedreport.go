@@ -50,8 +50,7 @@ func GenerateSignedReport(rak *ed25519.PrivateKey, report *Report) (*SignedRepor
 	}, nil
 }
 
-// Verify uses ed25519's Verify function to verify the signature over the
-// report.
+// Verify checks the source integrity of this report.
 func (sr *SignedReport) Verify() (bool, error) {
 	reportBytes, err := sr.Report.Bytes()
 	if err != nil {

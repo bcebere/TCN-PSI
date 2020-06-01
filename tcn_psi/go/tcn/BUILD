@@ -6,7 +6,6 @@ go_library(
         "serialize.go",
         "report.go",
         "signedreport.go",
-        "constants.go",
         "keys.go",
     ],
     deps = [

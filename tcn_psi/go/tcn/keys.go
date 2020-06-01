@@ -9,15 +9,15 @@ import (
 	"math"
 )
 
-// HTCKDomainSep is the domain separator used for the domain-separated hash
+// HTCKDomainSep is the domain separator used for the TCK domain-separated hash
 // function.
 var HTCKDomainSep = []byte("H_TCK")
 
-// HTCNDomainSep
+// HTCNDomainSep is the domain separator for the TCN domain-separated hash function.
 var HTCNDomainSep = []byte("H_TCN")
 
 // TemporaryContactNumber is a pseudorandom 128-bit value broadcast to nearby
-// devices over Bluetooth
+// devices over Bluetooth.
 type TemporaryContactNumber [16]uint8
 
 // TemporaryContactKey is a ratcheting key used to derive temporary contact
@@ -59,6 +59,7 @@ func (tck *TemporaryContactKey) Ratchet() (*TemporaryContactKey, error) {
 	}, nil
 }
 
+//TemporaryContactNumber computes the temporary contact number derived from this key.
 func (tck *TemporaryContactKey) TemporaryContactNumber() (*TemporaryContactNumber, error) {
 	nextHash := sha256.New()
 	if _, err := nextHash.Write(HTCNDomainSep); err != nil {
@@ -83,11 +84,13 @@ func (tck *TemporaryContactKey) TemporaryContactNumber() (*TemporaryContactNumbe
 	return &result, nil
 }
 
+//ReportAuthorizationKey authorizes publication of a report of potential exposure.
 type ReportAuthorizationKey struct {
 	RAK ed25519.PrivateKey
 	RVK ed25519.PublicKey
 }
 
+//NewReportAuthorizationKey initialize a new report authorization key from a random number generator.
 func NewReportAuthorizationKey() (*ReportAuthorizationKey, error) {
 	rvk, rak, err := ed25519.GenerateKey(nil)
 	if err != nil {
@@ -99,15 +102,18 @@ func NewReportAuthorizationKey() (*ReportAuthorizationKey, error) {
 	}, nil
 }
 
+//InitialTCK computes the initial temporary contact key derived from this report authorization key.
+//Note: this function returns `tck_1`, the first temporary contact key that can be
+//used to generate tcks.
 func (r *ReportAuthorizationKey) InitialTCK() (*TemporaryContactKey, error) {
-	tck0, err := r.TCK0()
+	tck0, err := r.tck0()
 	if err != nil {
 		return nil, err
 	}
 	return tck0.Ratchet()
 }
 
-func (r *ReportAuthorizationKey) TCK0() (*TemporaryContactKey, error) {
+func (r *ReportAuthorizationKey) tck0() (*TemporaryContactKey, error) {
 	tck0Hash := sha256.New()
 	if _, err := tck0Hash.Write([]byte(HTCKDomainSep)); err != nil {
 		fmt.Printf("Failed to write tck domain separator: %s\n", err.Error())
@@ -128,11 +134,29 @@ func (r *ReportAuthorizationKey) TCK0() (*TemporaryContactKey, error) {
 	}, nil
 }
 
+//CreateReport creates a report of potential exposure.
+//
+//# Inputs
+//
+//- `memoType`, `memoData`: the type and data for the report's memo field.
+//- `j_1 > 0`: the ratchet index of the first temporary contact number in the report.
+//- `j_2`: the ratchet index of the last temporary contact number other users should check.
+//
+//# Notes
+//
+//Creating a report reveals *all* temporary contact numbers subsequent to
+//`j_1`, not just up to `j_2`, which is included for convenience.
+//
+//The `memo_data` must be less than 256 bytes long.
+//
+//Reports are unlinkable from each other **only up to the memo field**. In
+//other words, adding the same high-entropy data to the memo fields of
+//multiple reports will cause them to be linkable.
 func (r *ReportAuthorizationKey) CreateReport(memoType uint8, memoData []uint8, j1, j2 uint16) (*Report, error) {
 	if j1 == 0 {
 		j1 = 1
 	}
-	tck, err := r.TCK0()
+	tck, err := r.tck0()
 	if err != nil {
 		return nil, err
 	}
@@ -153,6 +177,7 @@ func (r *ReportAuthorizationKey) CreateReport(memoType uint8, memoData []uint8, 
 	}, nil
 }
 
+//CreateSignedReport creates a signed exposure report, whose source integrity can be verified to produce a `Report`.
 func (r *ReportAuthorizationKey) CreateSignedReport(memoType uint8, memoData []uint8, j1, j2 uint16) (*SignedReport, error) {
 	report, err := r.CreateReport(memoType, memoData, j1, j2)
 	if err != nil {
