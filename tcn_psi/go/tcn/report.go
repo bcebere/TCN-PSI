@@ -44,7 +44,7 @@ func (r Report) TemporaryContactNumbers() (map[uint16]TemporaryContactNumber, er
 	}
 
 	result := map[uint16]TemporaryContactNumber{}
-	for idx := r.J1; idx < r.J2; idx++ {
+	for idx := r.J1; idx <= r.J2; idx++ {
 		val, err := tck.TemporaryContactNumber()
 		if err != nil {
 			return nil, err

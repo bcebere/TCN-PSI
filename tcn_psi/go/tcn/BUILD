@@ -17,6 +17,12 @@ go_library(
 
 go_test(
     name = "tcn_test",
-    srcs = ["parse_test.go"],
+    srcs = [
+    "parse_test.go",
+    "report_test.go",
+            ],
     embed = [":tcn"],
+    deps = [
+        "@com_github_juliangruber_go_intersect//:go_default_library",
+    ],
 )

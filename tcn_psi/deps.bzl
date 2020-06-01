@@ -43,3 +43,9 @@ def tcn_psi_deps():
         importpath = "github.com/stretchr/testify",
         tag = "v1.3.0",
     )
+
+    go_repository(
+        name = "com_github_juliangruber_go_intersect",
+        importpath = "github.com/juliangruber/go-intersect",
+        tag = "master",
+    )
