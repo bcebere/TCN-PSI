@@ -15,7 +15,7 @@ type TCNClient struct {
 func Create() (*TCNClient, error) {
 	tcnClient := new(TCNClient)
 
-	psiClient, err := psiclient.Create()
+	psiClient, err := psiclient.CreateWithNewKey(false)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *TCNClient) GetIntersectionSize(serverSetup, serverResponse string) (int
 		return 0, errors.New("invalid context")
 	}
 
-	return c.context.ProcessResponse(serverSetup, serverResponse)
+	return c.context.GetIntersectionSize(serverSetup, serverResponse)
 }
 
 //Version of the library.

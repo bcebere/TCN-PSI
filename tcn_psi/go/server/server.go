@@ -17,7 +17,7 @@ type TCNServer struct {
 func CreateWithNewKey() (*TCNServer, error) {
 	tcnServer := new(TCNServer)
 
-	psiServer, err := psiserver.CreateWithNewKey()
+	psiServer, err := psiserver.CreateWithNewKey(false)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func CreateWithNewKey() (*TCNServer, error) {
 func CreateFromKey(key []byte) (*TCNServer, error) {
 	tcnServer := new(TCNServer)
 
-	psiServer, err := psiserver.CreateFromKey(key)
+	psiServer, err := psiserver.CreateFromKey(key, false)
 	if err != nil {
 		return nil, err
 	}
