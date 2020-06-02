@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	psiserver "github.com/openmined/psi/server"
+	"github.com/openmined/tcn-psi/tcn"
 )
 
 //TCNServer context for the server side of a TCN-Private Set Intersection-Cardinality protocol.
@@ -42,12 +43,22 @@ func CreateFromKey(key []byte) (*TCNServer, error) {
 //client.
 //
 //Returns an error if the context is invalid or if the encryption fails.
-func (s *TCNServer) CreateSetupMessage(fpr float64, inputCount int64, rawInput []string) (string, error) {
+func (s *TCNServer) CreateSetupMessage(fpr float64, inputCount int64, reports []*tcn.SignedReport) (string, error) {
 	if s.context == nil {
 		return "", errors.New("invalid context")
 	}
 
-	return s.context.CreateSetupMessage(fpr, inputCount, rawInput)
+	contacts := []string{}
+	for idx := range reports {
+		candidates, err := reports[idx].Report.TemporaryContactNumbers()
+		if err != nil {
+			return "", err
+		}
+		for jdx := range candidates {
+			contacts = append(contacts, candidates[jdx].ToString())
+		}
+	}
+	return s.context.CreateSetupMessage(fpr, inputCount, contacts)
 }
 
 //ProcessRequest processes a client query and returns the corresponding server response to

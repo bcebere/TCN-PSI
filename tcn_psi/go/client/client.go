@@ -3,6 +3,7 @@ package client
 import (
 	"errors"
 	psiclient "github.com/openmined/psi/client"
+	"github.com/openmined/tcn-psi/tcn"
 )
 
 //TCNClient context for the client side of a TCN-Private Set Intersection-Cardinality protocol.
@@ -25,18 +26,22 @@ func Create() (*TCNClient, error) {
 //CreateRequest generates a request message to be sent to the server.
 //
 //Returns an error if the context is invalid or if the encryption fails.
-func (c *TCNClient) CreateRequest(rawInput []string) (string, error) {
+func (c *TCNClient) CreateRequest(contacts []tcn.TemporaryContactNumber) (string, error) {
 	if c.context == nil {
 		return "", errors.New("invalid context")
 	}
 
-	return c.context.CreateRequest(rawInput)
+	psiInput := []string{}
+	for idx := range contacts {
+		psiInput = append(psiInput, contacts[idx].ToString())
+	}
+	return c.context.CreateRequest(psiInput)
 }
 
-//ProcessResponse processes the server's response and returns the PSI cardinality.
+//GetIntersectionSize processes the server's response and returns the PSI cardinality.
 //
 //Returns an error if the context is invalid,  if any input messages are malformed or if decryption fails.
-func (c *TCNClient) ProcessResponse(serverSetup, serverResponse string) (int64, error) {
+func (c *TCNClient) GetIntersectionSize(serverSetup, serverResponse string) (int64, error) {
 	if c.context == nil {
 		return 0, errors.New("invalid context")
 	}

@@ -20,6 +20,11 @@ var HTCNDomainSep = []byte("H_TCN")
 // devices over Bluetooth.
 type TemporaryContactNumber [16]uint8
 
+// ToString dumps TCN to string
+func (tcn TemporaryContactNumber) ToString() string {
+	return string(tcn[:16])
+}
+
 // TemporaryContactKey is a ratcheting key used to derive temporary contact
 // numbers.
 type TemporaryContactKey struct {

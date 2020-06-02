@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"github.com/openmined/tcn-psi/client"
+	"github.com/openmined/tcn-psi/tcn"
 	"regexp"
 	"testing"
 )
@@ -37,13 +38,54 @@ func TestServerSanity(t *testing.T) {
 	}
 }
 
+func helperGetReports(cnt int) ([]*tcn.SignedReport, []tcn.TemporaryContactNumber, error) {
+	tcnsPerReport := 10
+	tcns := []tcn.TemporaryContactNumber{}
+	reports := []*tcn.SignedReport{}
+
+	for ridx := 0; ridx < cnt; ridx++ {
+		rak, err := tcn.NewReportAuthorizationKey()
+		if err != nil {
+			return nil, nil, err
+		}
+		tck, err := rak.InitialTCK()
+		if err != nil {
+			return nil, nil, err
+		}
+		for idx := 0; idx < tcnsPerReport; idx++ {
+			val, err := tck.TemporaryContactNumber()
+			if err != nil {
+				return nil, nil, err
+			}
+			tcns = append(tcns, *val)
+			tck, err = tck.Ratchet()
+			if err != nil {
+				return nil, nil, err
+			}
+		}
+		r, err := rak.CreateSignedReport(tcn.CoEpiV1Code, []byte{}, 1, uint16(tcnsPerReport))
+		if err != nil {
+			return nil, nil, err
+		}
+		if ridx%2 == 0 {
+			reports = append(reports, r)
+
+		}
+	}
+	return reports, tcns, nil
+}
+
 func TestServerFailure(t *testing.T) {
 	server := &TCNServer{}
 	_, err := server.GetPrivateKeyBytes()
 	if err == nil {
 		t.Errorf("GetPrivateKeyBytes should fail with an invalid context %v", err)
 	}
-	_, err = server.CreateSetupMessage(0.1, 100, []string{"dummy"})
+	serverItems, _, err := helperGetReports(10)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	_, err = server.CreateSetupMessage(0.1, 100, serverItems)
 	if err == nil {
 		t.Errorf("CreateSetupMessage should fail with an invalid context %v", err)
 	}
@@ -71,15 +113,11 @@ func TestServerClient(t *testing.T) {
 		t.Errorf("Failed to create a PSI server %v", err)
 	}
 
-	generateItems := func(cnt int, m int) (int, []string) {
-		items := []string{}
-		for i := 0; i < cnt; i++ {
-			items = append(items, "Element "+string(m*i))
-		}
-		return cnt, items
+	serverItems, clientItems, err := helperGetReports(1000)
+	if err != nil {
+		t.Error(err.Error())
 	}
-	cntClientItems, clientItems := generateItems(1000, 1)
-	_, serverItems := generateItems(10000, 2)
+	cntClientItems := len(clientItems)
 
 	setup, err := server.CreateSetupMessage(0.01, int64(cntClientItems), serverItems)
 	if err != nil {
@@ -93,7 +131,7 @@ func TestServerClient(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to process request %v", err)
 	}
-	intersectionCnt, err := client.ProcessResponse(setup, serverResp)
+	intersectionCnt, err := client.GetIntersectionSize(setup, serverResp)
 	if err != nil {
 		t.Errorf("failed to compute intersection %v", err)
 	}
@@ -118,13 +156,11 @@ func benchmarkServerSetup(cnt int, fpr float64, b *testing.B) {
 			b.Errorf("failed to get server")
 		}
 
-		inputs := []string{}
-		for i := 0; i < cnt; i++ {
-			inputs = append(inputs, "Element "+string(i))
+		serverItems, clientItems, err := helperGetReports(cnt)
+		if err != nil {
+			b.Error(err.Error())
 		}
-
-		numClientInputs := 10000
-		setup, err := server.CreateSetupMessage(fpr, int64(numClientInputs), inputs)
+		setup, err := server.CreateSetupMessage(fpr, int64(len(clientItems)), serverItems)
 		if err != nil {
 			b.Errorf("failed to create setup msg %v", err)
 		}
@@ -168,7 +204,11 @@ func benchmarkServerProcessRequest(cnt int, b *testing.B) {
 			inputs = append(inputs, "Element "+string(i))
 		}
 
-		request, err := client.CreateRequest(inputs)
+		_, clientItems, err := helperGetReports(cnt)
+		if err != nil {
+			b.Error(err.Error())
+		}
+		request, err := client.CreateRequest(clientItems)
 		if err != nil {
 			b.Errorf("failed to create request %v", err)
 		}
