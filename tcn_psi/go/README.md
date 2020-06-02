@@ -8,7 +8,7 @@ TCN protocol based on Private Set Intersection Cardinality.
 import "github.com/openmined/tcn-psi/client"
 ```
 
-## PSI server [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/OpenMined/TCN-PSI/tcn_psi/go/server)
+## TCN server [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/OpenMined/TCN-PSI/tcn_psi/go/server)
 ```
 import "github.com/openmined/tcn-psi/client"
 ```
@@ -52,16 +52,14 @@ import (
 )
 
 func main(){
-    psiServer, err := server.CreateWithNewKey()
+    tcnServer, err := server.CreateWithNewKey()
     if err == nil {
         fmt.Println("server loaded")
-        psiServer.Destroy()
     }
 
-    psiClient, err := client.Create()
+    tcnClient, err := client.Create()
     if err == nil  {
         fmt.Println("client loaded")
-        psiClient.Destroy()
     }
 }
 ```
