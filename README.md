@@ -10,7 +10,9 @@ TCN protocol based on Private Set Intersection Cardinality.
 3. The client encodes a list of TCNs and loads them in the PSI client logic.
 4. The client and server follow the PSI protocol, and the client receives the intersection size.
 
-See the full PSI description [here](https://github.com/OpenMined/PSI/blob/master/private_set_intersection/cpp/psi_client.h)
+See the full TCN protocol description [here](https://github.com/TCNCoalition/TCN).
+
+See the full PSI description [here](https://github.com/OpenMined/PSI/blob/master/private_set_intersection/cpp/psi_client.h).
 
 ## Requirements
 
