@@ -52,13 +52,13 @@ git_repository(
    init_submodules = True,
 )
 
-load("@org_openmined_psi//tcn_psi:preload.bzl", "psi_preload")
+load("@org_openmined_psi//tcn_psi:preload.bzl", "tcn_psi_preload")
 
-psi_preload()
+tcn_psi_preload()
 
-load("@org_openmined_psi//tcn_psi:deps.bzl", "psi_deps")
+load("@org_openmined_psi//tcn_psi:deps.bzl", "tcn_psi_deps")
 
-psi_deps()
+tcn_psi_deps()
 
 ```
 
