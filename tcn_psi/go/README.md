@@ -1,14 +1,14 @@
-# TCN-PSI Cardinality - Go [![Go Report Card](https://goreportcard.com/badge/github.com/OpenMined/TCN-PSI)](https://goreportcard.com/report/github.com/OpenMined/TCN-PSI)
+# TCN-PSI Cardinality - Go [![Go Report Card](https://goreportcard.com/badge/github.com/bcebere/TCN-PSI)](https://goreportcard.com/report/github.com/bcebere/TCN-PSI)
 
 TCN protocol based on Private Set Intersection Cardinality.
 
 
-## TCN client [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/OpenMined/TCN-PSI/tcn_psi/go/client)
+## TCN client [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/bcebere/TCN-PSI/tcn_psi/go/client)
 ```
 import "github.com/openmined/tcn-psi/client"
 ```
 
-## TCN server [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/OpenMined/TCN-PSI/tcn_psi/go/server)
+## TCN server [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/bcebere/TCN-PSI/tcn_psi/go/server)
 ```
 import "github.com/openmined/tcn-psi/client"
 ```
