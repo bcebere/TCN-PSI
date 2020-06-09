@@ -5,12 +5,12 @@ TCN protocol based on Private Set Intersection Cardinality.
 
 ## TCN client [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/bcebere/TCN-PSI/tcn_psi/go/client)
 ```
-import "github.com/openmined/tcn-psi/client"
+import "github.com/bcebere/tcn-psi/client"
 ```
 
 ## TCN server [![Documentation](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/bcebere/TCN-PSI/tcn_psi/go/server)
 ```
-import "github.com/openmined/tcn-psi/client"
+import "github.com/bcebere/tcn-psi/client"
 ```
 
 ## Tests
